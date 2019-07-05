@@ -1,0 +1,13 @@
+Given n a prime number and p, q two integers between 0 and n-1, find k such that pk = q (mod n).
+The naive solution goes through all possible values of k and takes O(n) time.
+
+The baby-step, giant-step algorithm solves the problem more efficiently using the meet in the middle trick.
+Let's write k = i[sqrt(n)] + j
+Notice that i <= sqrt(n) and j <= sqrt(n).
+Replacing k in the equality we get p(i[sqrt(n)] + j) = q (mod n).
+Dividing by pj we get pi[sqrt(n)] = qp-j (mod n). 
+At this point we can brute force through the numbers on each side of the equality and find a colision.
+
+The algorithm takes O(sqrt(n)) space and O(sqrt(n)) time.
+
+https://www.topcoder.com/blog/single-round-match-751-editorials/       (Problem - WrongBase)
