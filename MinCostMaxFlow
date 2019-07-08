@@ -1,0 +1,188 @@
+class MinCostMaxFlow{
+                ArrayList<Edge> al[];
+                Edge ja[][]; 
+                int rcap[][]; // residual capacity
+                double d[]; // shortest distances
+                int N , S , T , maxFlow ; double minCost;
+                final int gmax = Integer.MAX_VALUE;
+                
+                int edges = 0;
+
+                class Edge{
+                    int u , flow; double cost;
+                    Edge(int a, int b, double c){u = a; flow = b; cost = c;}
+                }
+                
+                void addEdge(int u , int v , int flow , double cost){
+                    al[u].add(new Edge(v, flow, cost)); rcap[u][v] = flow;
+                    al[v].add(new Edge(u, 0, -cost));   rcap[v][u] = 0;
+                }
+                
+                void convertToArray(){
+                    ja = new Edge[N][];
+                    for(int i = 0; i < N; i++){
+                        int sz = al[i].size();
+                        ja[i] = new Edge[sz];
+                        for(int j = 0; j < sz; j++){
+                            ja[i][j] = al[i].get(j);
+                        }
+                        al[i].clear();
+                    }
+                }
+                
+                MinCostMaxFlow(int n , int source , int sink){
+                    N = n; S = source; T = sink; maxFlow = 0; minCost = 0;
+                    rcap = new int[N][N];
+                    al = new ArrayList[N];
+                    d = new double[N];
+                    for(int i = 0; i < N; i++){
+                        al[i] = new ArrayList<>();
+                    }
+                }
+                
+                boolean BellmanFord(boolean check){
+                    d[0] = 0;
+                    for(int i = 0; i < N - 1; i++){
+                        for(int j = 0; j < N; j++){
+                            for(Edge e : ja[j]){
+                                if(rcap[j][e.u] == 0)continue; // not to consider reverse edges
+                                d[e.u] = Math.min(d[e.u] , d[j] + e.cost);
+                            }
+                        }
+                    }
+                    if(check){// check for negative cycles
+                        for(int j = 0; j < N; j++){
+                            for(Edge e : ja[j]){
+                                if(rcap[j][e.u] == 0)continue;
+                                if(d[j] + e.cost < d[e.u]) return false;
+                            }
+                        }   
+                    }return true;
+                }
+
+                int node[]; // present node 
+
+                int visit[]; // 0 -> not added 1 -> not removed 2 -> removed
+                int prv[]; // previous node for augmentation
+                double dist[]; // min dist
+
+                boolean simple(){
+                    node = new int[N]; 
+                    visit = new int[N]; 
+                    prv = new int[N];
+                    dist = new double[N];   Arrays.fill(dist , gmax);
+
+                    node[0] = S; dist[0] = 0;
+                    int front = 1, back = 0;
+                    while(front != back){
+                        int u = node[back++]; double distu = dist[u];
+                        if(back == N)back = 0;
+                        visit[u] = 2;
+                        for(Edge e : ja[u]){
+                            if(rcap[u][e.u] == 0)continue;
+                            double cdist = distu + e.cost; // no need of reduced cost
+                            if(cdist < dist[e.u]){
+                                if(visit[e.u] == 0){
+                                    node[front] = e.u; 
+                                    if(++front == N)front = 0;
+                                }else if(visit[e.u] == 2){
+                                    if(--back == -1)back += N;
+                                    node[back] = e.u;
+                                }
+                                visit[e.u] = 1;
+                                prv[e.u] = u; dist[e.u] = cdist;
+                            }
+                        }
+                    }
+                    return visit[T] != 0;
+                }
+
+                class pair{
+                    int F; double S;
+                    pair(int a, double b){F = a; S = b;}
+                }
+
+                boolean dijkstra(){
+                    visit = new int[N];
+                    prv = new int[N];
+                    dist = new double[N]; Arrays.fill(dist, gmax);
+                    PriorityQueue<pair> pq = new PriorityQueue<>((A, B) -> Double.compare(A.S , B.S));
+
+                    pq.add(new pair(S , 0)); dist[0] = 0;
+                    o : while(!pq.isEmpty()){
+                        pair p = pq.poll();
+                        while(dist[p.F] < p.S){
+                            if(pq.isEmpty()) break o; // had a better val 
+                            p = pq.poll();
+                        }
+                        visit[p.F] = 2;
+                        for(Edge e : ja[p.F]){
+                            if(rcap[p.F][e.u] == 0)continue; // important
+                            double cdist = p.S + (e.cost + d[p.F] - d[e.u]); // reduced cost
+                            if(cdist < dist[e.u]){ 
+                                if(visit[e.u] == 2) return false;
+                                pq.add(new pair(e.u , cdist));
+                                dist[e.u] = cdist; prv[e.u] = p.F;
+                                visit[e.u] = 1;
+                            }
+                        }
+                    }
+                    return visit[T] != 0;
+                }
+                
+                int augment(){
+                    int p = T; int min = gmax;
+                    while(p != 0){
+                        int pp = prv[p];
+                        int val = rcap[pp][p];
+                        min = Math.min(min , val);
+                        p = pp;
+                    }
+                    p = T;
+                    while(p != 0){
+                        int pp = prv[p];
+                        rcap[pp][p] -= min;
+                        rcap[p][pp] += min;
+                        p = pp;
+                    }
+                    maxFlow += min;
+                    return min;
+                }
+
+                // if(dist[T] >= 0)return true; // non contributing flow
+                boolean calSimple(){
+                    // uncomment to check for negative cycles
+                    /* boolean possible = BellmanFord(true); 
+                     if(!possible) return false; */
+                    while(simple()){
+                        /*if(dist[T] >= 0)return true;*/ 
+                        minCost += dist[T] * augment();
+                    }
+                    return true;
+                }
+
+                void updPotential(){
+                    for(int i = 0; i < N; i++){
+                        if(visit[i] != 0){
+                            d[i] += dist[i] - dist[S];
+                        }
+                    }
+                }
+                boolean calWithPotential(){
+                    // set true to check for negative cycles
+                    boolean possible = BellmanFord(false); 
+                    if(!possible) return false;
+                    while(dijkstra()){
+                        double min = dist[T] + d[T] - d[S]; // getting back the original cost
+                        /*if(dist[T] >= 0)return true;*/
+                        minCost += min * augment();
+                        updPotential();
+                    }
+                    return true;   
+                }
+            }
+            
+            /* Performance Analysis
+              Problem                                               Simple              WithPotential
+              https://codeforces.com/contest/277/problem/E           500           1500 - 1700 (negative weight dominates)                        
+            */
