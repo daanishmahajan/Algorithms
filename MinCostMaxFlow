@@ -1,21 +1,21 @@
-class MinCostMaxFlow{
+       class MinCostMaxFlow{
                 ArrayList<Edge> al[];
                 Edge ja[][]; 
-                int rcap[][]; // residual capacity
-                double d[]; // shortest distances
-                int N , S , T , maxFlow ; double minCost;
-                final int gmax = Integer.MAX_VALUE;
+                int d[]; // shortest distances
+                int N , S , T , maxFlow ; int minCost;
+                final int gmax = Integer.MAX_VALUE / 100;
                 
                 int edges = 0;
 
                 class Edge{
-                    int u , flow; double cost;
-                    Edge(int a, int b, double c){u = a; flow = b; cost = c;}
+                    int u , flow, rid, cost;
+                    Edge(int a, int b, int c, int d){u = a; flow = b; cost = c; rid = d;}
                 }
                 
-                void addEdge(int u , int v , int flow , double cost){
-                    al[u].add(new Edge(v, flow, cost)); rcap[u][v] = flow;
-                    al[v].add(new Edge(u, 0, -cost));   rcap[v][u] = 0;
+                void addEdge(int u , int v , int flow , int cost){
+                    int lu = al[u].size(), lv = al[v].size();
+                    al[u].add(new Edge(v, flow, cost, lv)); 
+                    al[v].add(new Edge(u, 0, -cost, lu));   
                 }
                 
                 void convertToArray(){
@@ -32,9 +32,8 @@ class MinCostMaxFlow{
                 
                 MinCostMaxFlow(int n , int source , int sink){
                     N = n; S = source; T = sink; maxFlow = 0; minCost = 0;
-                    rcap = new int[N][N];
                     al = new ArrayList[N];
-                    d = new double[N];
+                    d = new int[N];
                     for(int i = 0; i < N; i++){
                         al[i] = new ArrayList<>();
                     }
@@ -45,7 +44,7 @@ class MinCostMaxFlow{
                     for(int i = 0; i < N - 1; i++){
                         for(int j = 0; j < N; j++){
                             for(Edge e : ja[j]){
-                                if(rcap[j][e.u] == 0)continue; // not to consider reverse edges
+                                if(e.flow == 0)continue; // not to consider reverse edges
                                 d[e.u] = Math.min(d[e.u] , d[j] + e.cost);
                             }
                         }
@@ -53,7 +52,7 @@ class MinCostMaxFlow{
                     if(check){// check for negative cycles
                         for(int j = 0; j < N; j++){
                             for(Edge e : ja[j]){
-                                if(rcap[j][e.u] == 0)continue;
+                                if(e.flow == 0)continue;
                                 if(d[j] + e.cost < d[e.u]) return false;
                             }
                         }   
@@ -63,24 +62,26 @@ class MinCostMaxFlow{
                 int node[]; // present node 
 
                 int visit[]; // 0 -> not added 1 -> not removed 2 -> removed
-                int prv[]; // previous node for augmentation
-                double dist[]; // min dist
+                int prv[], prve[]; // previous node for augmentation
+                int dist[]; // min dist
 
                 boolean simple(){
                     node = new int[N]; 
                     visit = new int[N]; 
                     prv = new int[N];
-                    dist = new double[N];   Arrays.fill(dist , gmax);
+                    prve = new int[N];
+                    dist = new int[N];   Arrays.fill(dist , gmax);
 
                     node[0] = S; dist[0] = 0;
                     int front = 1, back = 0;
                     while(front != back){
-                        int u = node[back++]; double distu = dist[u];
+                        int u = node[back++]; int distu = dist[u];
                         if(back == N)back = 0;
                         visit[u] = 2;
-                        for(Edge e : ja[u]){
-                            if(rcap[u][e.u] == 0)continue;
-                            double cdist = distu + e.cost; // no need of reduced cost
+                        for(int i = 0; i < ja[u].length; i++){
+                            Edge e = ja[u][i];
+                            if(e.flow == 0)continue;
+                            int cdist = distu + e.cost; // no need of reduced cost
                             if(cdist < dist[e.u]){
                                 if(visit[e.u] == 0){
                                     node[front] = e.u; 
@@ -90,7 +91,7 @@ class MinCostMaxFlow{
                                     node[back] = e.u;
                                 }
                                 visit[e.u] = 1;
-                                prv[e.u] = u; dist[e.u] = cdist;
+                                prve[e.u] = i; prv[e.u] = u; dist[e.u] = cdist;
                             }
                         }
                     }
@@ -98,14 +99,15 @@ class MinCostMaxFlow{
                 }
 
                 class pair{
-                    int F; double S;
-                    pair(int a, double b){F = a; S = b;}
+                    int F; int S;
+                    pair(int a, int b){F = a; S = b;}
                 }
 
                 boolean dijkstra(){
                     visit = new int[N];
                     prv = new int[N];
-                    dist = new double[N]; Arrays.fill(dist, gmax);
+                    prve = new int[N];
+                    dist = new int[N]; Arrays.fill(dist, gmax);
                     PriorityQueue<pair> pq = new PriorityQueue<>((A, B) -> Double.compare(A.S , B.S));
 
                     pq.add(new pair(S , 0)); dist[0] = 0;
@@ -116,13 +118,14 @@ class MinCostMaxFlow{
                             p = pq.poll();
                         }
                         visit[p.F] = 2;
-                        for(Edge e : ja[p.F]){
-                            if(rcap[p.F][e.u] == 0)continue; // important
-                            double cdist = p.S + (e.cost + d[p.F] - d[e.u]); // reduced cost
+                        for(int i = 0; i < ja[p.F].length; i++){
+                            Edge e = ja[p.F][i];
+                            if(e.flow == 0)continue; // important
+                            int cdist = p.S + (e.cost + d[p.F] - d[e.u]); // reduced cost
                             if(cdist < dist[e.u]){ 
                                 if(visit[e.u] == 2) return false;
                                 pq.add(new pair(e.u , cdist));
-                                dist[e.u] = cdist; prv[e.u] = p.F;
+                                dist[e.u] = cdist; prv[e.u] = p.F; prve[e.u] = i;
                                 visit[e.u] = 1;
                             }
                         }
@@ -133,16 +136,16 @@ class MinCostMaxFlow{
                 int augment(){
                     int p = T; int min = gmax;
                     while(p != 0){
-                        int pp = prv[p];
-                        int val = rcap[pp][p];
+                        int pp = prv[p], pe = prve[p];
+                        int val = ja[pp][pe].flow;
                         min = Math.min(min , val);
                         p = pp;
                     }
                     p = T;
                     while(p != 0){
-                        int pp = prv[p];
-                        rcap[pp][p] -= min;
-                        rcap[p][pp] += min;
+                        int pp = prv[p], pe = prve[p];
+                        ja[pp][pe].flow -= min;
+                        ja[p][ja[pp][pe].rid].flow += min;
                         p = pp;
                     }
                     maxFlow += min;
@@ -170,19 +173,19 @@ class MinCostMaxFlow{
                 }
                 boolean calWithPotential(){
                     // set true to check for negative cycles
-                    boolean possible = BellmanFord(false); 
-                    if(!possible) return false;
+                    // boolean possible = BellmanFord(false); 
+                    // if(!possible) return false;
                     while(dijkstra()){
-                        double min = dist[T] + d[T] - d[S]; // getting back the original cost
+                        int min = dist[T] + d[T] - d[S]; // getting back the original cost
                         /*if(dist[T] >= 0)return true;*/
                         minCost += min * augment();
                         updPotential();
                     }
                     return true;   
                 }
-            }
-            
+            }            
             /* Performance Analysis
               Problem                                               Simple              WithPotential
-              https://codeforces.com/contest/277/problem/E           500           1500 - 1700 (negative weight dominates)                        
+              https://codeforces.com/contest/277/problem/E (BipG)    500           1500 - 1700 (negative weight dominates)                        
+              https://codeforces.com/contest/1187/problem/G (Norm)   1000                   800 
             */
