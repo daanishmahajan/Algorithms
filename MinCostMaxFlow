@@ -173,8 +173,8 @@
                 }
                 boolean calWithPotential(){
                     // set true to check for negative cycles
-                    // boolean possible = BellmanFord(false); 
-                    // if(!possible) return false;
+                    boolean possible = BellmanFord(false); 
+                    if(!possible) return false;
                     while(dijkstra()){
                         int min = dist[T] + d[T] - d[S]; // getting back the original cost
                         /*if(dist[T] >= 0)return true;*/
