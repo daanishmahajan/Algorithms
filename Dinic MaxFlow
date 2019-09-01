@@ -1,0 +1,82 @@
+class DinicMaxFlow{
+        class Edge{
+            int F, S, T;
+            Edge(int a, int b, int c){
+                F = a; S = b; T = c;
+            }
+        }
+        final int max = Integer.MAX_VALUE;
+        int N, S, T, maxflow;
+        Edge ja[][];
+        int pst[][];
+        int queue[];
+        int order[];
+        ArrayList<Edge> al[];
+        DinicMaxFlow(int nodes, int source, int sink){
+            N = nodes; S = source; T = sink;
+            al = new ArrayList[N];
+            ja = new Edge[N][];
+            pst = new int[N][N];
+            order = new int[N];
+            queue = new int[N];
+            maxflow = 0;
+            for(int i = 0; i < N; i++){
+                al[i] = new ArrayList<>();
+            }
+        }
+        void addEdge(int u, int v, int cap){
+            int su = al[u].size(), sv = al[v].size();
+            pst[u][v] = su; pst[v][u] = sv;
+            al[u].add(new Edge(v, cap, sv));
+            al[v].add(new Edge(u, 0, su));
+        }
+        void convertToArray(){
+            for(int i = 0; i < N; i++){
+                int sz = al[i].size();
+                ja[i] = new Edge[sz];
+                for(int j = 0; j < sz; j++){
+                    ja[i][j] = al[i].get(j);
+                }
+                al[i].clear();
+            }
+        }
+
+        boolean bfs(){
+            Arrays.fill(order, - 1);
+            int end = 0, start = 0;
+            queue[end++] = S;
+            order[S] = 0; 
+
+            while(start != end){
+                int u = queue[start++];
+                for(Edge e : ja[u]){
+                    if(e.S == 0 || order[e.F] != -1)continue;
+                    order[e.F] = order[u] + 1;
+                    queue[end++] = e.F;
+                }
+            }
+            return order[T] != -1;
+        }
+        int dfs(int u, int bf){
+            if(u == T)return bf;
+            for(Edge e : ja[u]){
+                if(order[e.F] != order[u] + 1 || e.S == 0)continue;
+                int sf = Math.min(bf, e.S);
+                int ef = dfs(e.F, sf);
+                if(ef == 0)continue;
+                e.S -= ef;
+                ja[e.F][e.T].S += ef; 
+                return ef;
+            }
+            return 0;
+        }
+        int maxFlow(){
+            int flow;
+            while(bfs()){
+                while((flow = dfs(S, max)) != 0){
+                    maxflow += flow;
+                }
+            }
+            return maxflow;
+        }
+    }
