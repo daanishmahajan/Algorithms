@@ -1,0 +1,74 @@
+class PushRelabel{
+        class Edge{
+            int u, cap, rid;
+            Edge(int a, int b, int c){u = a; cap = b; rid = c;}
+        }
+        int N, S, T;
+        ArrayList<Edge> al[];
+        Edge ja[][];
+
+        PushRelabel(int tot, int source, int sink){
+            N = tot; S = source; T = sink;
+            al = new ArrayList[N];
+            ja = new Edge[N][];
+            for(int i = 0; i < N; i++){
+                al[i] = new ArrayList<>();
+            }
+        }
+        void addEdge(int u, int v, int cap){
+            int su = al[u].size() , sv = al[v].size();
+            al[u].add(new Edge(v, cap, sv));
+            al[v].add(new Edge(u, 0, su));
+        }
+        void convertToArray(){
+            for(int i = 0; i < N; i++){
+                int sz = al[i].size();
+                ja[i] = new Edge[sz];
+                for(int j = 0; j < sz; j++){
+                    ja[i][j] = al[i].get(j);
+                }
+                al[i].clear();
+            }
+        }
+        int h[], ex[];
+        boolean in[];
+        ArrayDeque<Integer> ad=new ArrayDeque<>();
+        int pr(){
+            h=new int[N];
+            ex=new int[N];
+            in=new boolean[N];
+            h[S]=N+1;
+            for(Edge e:ja[S]){
+                ex[e.u] += e.cap;
+                e.cap = 0; ja[e.u][e.rid].cap = e.cap;
+                h[e.u] = 1; in[e.u] = true;
+                ad.addFirst(e.u);
+            }
+            while(!ad.isEmpty()){
+                int u= ad.getFirst();
+                int jump=10*N;
+                for(Edge e:ja[u]){
+                    if(ex[u]==0)break;
+                    if(e.cap > 0){
+                        if(h[e.u]<h[u]){
+                            int flow=Math.min(ex[u],e.cap);
+                            e.cap -= flow; ja[e.u][e.rid].cap += flow;
+                            ex[u] -= flow; ex[e.u] += flow;
+                            if(e.u!=S&&e.u!=T&&!in[e.u]){
+                                ad.addLast(e.u);
+                                in[e.u]=true;
+                            }
+                        }else{
+                            jump=Math.min(jump,h[e.u]);
+                        }
+                    }
+                }
+                if(ex[u]==0){
+                    ad.pollFirst();in[u]=false;
+                }else{
+                    h[u]=jump+1;
+                }
+            }
+            return ex[T];
+        }
+    }
