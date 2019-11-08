@@ -1,0 +1,33 @@
+pair seg[] = new pair[4 * max];
+    long find(pair p, long x){
+        return p.F * x + p.S;
+    }
+    void upd(int n, int s, int e, pair u){
+        if(seg[n] == null || s == e){
+            seg[n] = u;
+            return;
+        }
+        int mid = (s + e) >> 1;
+        boolean lowL = find(seg[n], s) > find(u, s);
+        boolean lowM = find(seg[n], mid) > find(u, mid);
+        if(lowL && lowM){
+            pair f = seg[n];
+            seg[n] = u;
+            upd(2 * n + 2, mid + 1, e, f);
+        }else if(!lowL && !lowM){
+            upd(2 * n + 2, mid + 1, e, u);
+        }else if(lowL && !lowM){
+            upd(2 * n + 1, s, mid, u);
+        }else{
+            pair f = seg[n];
+            seg[n] = u;
+            upd(2 * n + 1, s, mid, f);
+        }
+    }
+    long query(int n, int s, int e, long x){
+        if(seg[n] == null)return maxv;
+        if(s == e)return find(seg[n], x);
+        int mid = (s + e) >> 1;
+        if(x <= mid)return Math.min(find(seg[n], x), query(2 * n + 1, s, mid, x));
+        else return Math.min(find(seg[n], x), query(2 * n + 2, mid + 1, e, x));
+    }
