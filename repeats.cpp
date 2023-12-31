@@ -272,7 +272,7 @@ void triplerepeat_bruteDiploid(SuffixTree *ST, map<int, ll> &repeatstats_brute){
 
                                 string st1 = s.substr(s1, sl), st2 = s.substr(s2, sl), st3 = s.substr(s3, sl);
                                 if(st1 == st2 && st2 == st3){
-                                    cout << sl << " " << i << " " << j << " " << k << " - " << g1 << " " << g2 << " " << g3 << endl;
+                                    // cout << sl << " " << i << " " << j << " " << k << " - " << g1 << " " << g2 << " " << g3 << endl;
                                     if(repeatstats_brute.find(sl) == repeatstats_brute.end())repeatstats_brute[sl] = 1;
                                     else repeatstats_brute[sl] = repeatstats_brute[sl] + 1;
                                     found = true;
@@ -296,22 +296,22 @@ void printSuffixTree(node *n){
 int main()
 {   
     while(true){
-        // int l = 5, n = 2;
-        // string s = "";
-        // char c[] = {'A', 'C', 'G', 'T'};
-        // for(int i = 0; i < l; i++){
-        //     s += c[rnd.next(0, 3)];
-        // }
-        // set<int> locipst;
-        // while(locipst.size() < n){
-        //     locipst.insert(rnd.next(0, l - 1));
-        // }
-        // string s1 = s; 
-        // for(set<int>::iterator it = locipst.begin(); it != locipst.end(); it++){
-        //     s1[*it] = c[(char_map[s[*it]] + 1) % 4];
-        // }
+        int l = 100, n = 10;
+        string s = "";
+        char c[] = {'A', 'C', 'G', 'T'};
+        for(int i = 0; i < l; i++){
+            s += c[rnd.next(0, 3)];
+        }
+        set<int> locipst;
+        while(locipst.size() < n){
+            locipst.insert(rnd.next(0, l - 1));
+        }
+        string s1 = s; 
+        for(set<int>::iterator it = locipst.begin(); it != locipst.end(); it++){
+            s1[*it] = c[(char_map[s[*it]] + 1) % 4];
+        }
 
-        string s = "TGGGC", s1 = "TGTGG"; // code doesn't work for cases where one haplotype is the cyclic rotation of the other
+        // string s = "TGGGC", s1 = "TGTGG"; // code doesn't work for cases where one haplotype is the cyclic rotation of the other
         vector<string> v; v.pb(s); v.pb(s1); // diploid
         // vector<string> v; v.pb(s); v.pb(s); // haploid
         string query = v[0] + v[0] + '0' + v[1] + v[1] + '1';
@@ -377,12 +377,12 @@ int main()
             for(auto &stats : repeatstats_brute){
                 cout << stats.first << " " << stats.second << endl;
             }
-            // break;
+            break;
         }
         // else cout << "OK\n";
 
         free(ST);
 
-        break;
+        // break;
     }
 } 
