@@ -1,0 +1,34 @@
+The generation of sequencing reads in real time, which, in combination with fast library preparation, immensely reduces the time needed to go from biological sample to data analysis, enables (for example) intraoperative decision-making8, improved global food security by rapid identification of plant viruses9 and portable genomic surveillance
+
+valuable tool for clinical surveillance and medical-based research, which can be used in addition to other host depletion methods before sequencing
+
+Metagenomic sequencing is promising for clinical applications to study microbial composition concerning disease or patient outcomes.
+
+However, their identification via conventional culture-based, microbiological diagnostic techniques suffers from long reporting delays and low sensitivity and specificity14,15. On the other hand, pathogen identification based on 16S ribosomal RNA gene sequencing gives insights into the metagenomic composition with a lower resolution than metagenomics and suffers from various inherent biases to interpret abundance data properly: e.g., primer mismatches, different gene copy numbers, recombinations, sequence- and primer-dependent polymerase efficiency, or choice of hypervariable regions16–19.
+
+
+Nanopore sequencers can select which DNA molecules to sequence, rejecting a molecule after analysis of a small initial part.
+
+Nanopore’s adaptive sampling method offers selective DNA depletion or target enrichment to directly reject or accept DNA molecules during sequencing without specialized sample preparation.
+Oxford Nanopore Technologies (ONT) recently (November 2020) introduced target enrichment or depletion of unwanted DNA molecules directly during sequencing by simply providing any target DNA fasta sequence.
+
+While a DNA molecule is sequenced in the nanopore, the data is already compared live with references to decide whether the DNA molecule should be sequenced further (accepted or no decision yet) or removed directly from the pore (rejected). Each pore is individually addressable and can reverse the voltage on its pore to reject DNA molecules and sequence another one instead, increasing the sequencing capacity for molecules of interest
+
+The main advantage is that this depletion or enrichment method can be combined in addition to wet-lab depletion or enrichment methods and does not prolong the overall sequencing run time.
+
+in samples containing relatively high proportions of host DNA (> 90%) like saliva, throat, buccal mucosa, and vaginal samples, the detection of low abundant species is expected to be impaired2. Host DNA depletion prior to sequencing by selective lysis of host and microbial cells or selective removal of CpG-methylated host DNA are complex wet-lab procedures3. For instance, host DNA depletion via, e.g., saponin or the “MolYsis Complete5” kit improves the sensitivity of pathogen detection after sequencing4–6.
+
+
+Currently, selection is based on predetermined regions of interest that remain constant throughout an experiment. Sequencing efforts, thus, cannot be re-focused on molecules likely contributing most to experimental success.
+
+dynamically updated decision strategies
+
+We quantify uncertainty at each genome position with real-time updates from data already observed.
+
+decide whether the expected decrease in uncertainty that it would provide warrants fully sequencing it, thus optimizing information gain
+
+mitigates coverage bias between and within members of a microbial community, leading to improved variant calling
+
+
+
+
