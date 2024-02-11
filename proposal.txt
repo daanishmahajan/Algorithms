@@ -1,3 +1,6 @@
+Removing the need for short reads, and higher coverage via improvements in non-hybrid error correction tools and/or long-read sequencing accuracy, would reduce the cost, length, and complexity of genomic projects. [Amar 2020]
+
+
 The generation of sequencing reads in real time, which, in combination with fast library preparation, immensely reduces the time needed to go from biological sample to data analysis, enables (for example) intraoperative decision-making8, improved global food security by rapid identification of plant viruses9 and portable genomic surveillance
 
 valuable tool for clinical surveillance and medical-based research, which can be used in addition to other host depletion methods before sequencing
@@ -21,6 +24,10 @@ in samples containing relatively high proportions of host DNA (> 90%) like saliv
 
 Currently, selection is based on predetermined regions of interest that remain constant throughout an experiment. Sequencing efforts, thus, cannot be re-focused on molecules likely contributing most to experimental success.
 
+In current implementations, decisions about which fragments to read or reject are based on a priori decisions—for example, of regions of interest (ROIs) in a genome12,14. This restricts their application to a narrow range of problems where sufficient information is available in advance of sequencing a potentially poorly characterized sample. We hypothesized that such decisions could also incorporate information obtained from already sequenced fragments generated in the current sequencing run.
+
+
+
 dynamically updated decision strategies
 
 We quantify uncertainty at each genome position with real-time updates from data already observed.
@@ -28,6 +35,26 @@ We quantify uncertainty at each genome position with real-time updates from data
 decide whether the expected decrease in uncertainty that it would provide warrants fully sequencing it, thus optimizing information gain
 
 mitigates coverage bias between and within members of a microbial community, leading to improved variant calling
+
+During a sequencing experiment, the distribution of coverage depth might not correspond well to the requirements of the experiment—for example, when determining variant sites (Fig. 1). Commonly, at present, the overall coverage would have to be increased to ensure sufficient sampling throughout, causing wasteful data acquisition in regions that are not of continued interest. We address this issue by generating dynamic decision strategies that redistribute coverage to positions of greatest value at any time during an experiment. Our method can focus sequencing on variant sites, without a priori knowledge of their location, increasing the accuracy of called genotypes. Furthermore, it can divert sequencing resources away from regions with high coverage toward regions with low coverage, leading to more homogeneous distribution of sequencing reads.
+
+prior of this distribution can be informed by reference genomes (in the sense of any assembly) and is subsequently updated as we collect data throughout the experiment—that is, we calculate a posterior probability distribution based on the observed nucleotides at that position. Additionally, ploidy and sequencing error probabilities are taken into account. This allows us to calculate the remaining uncertainty about the genotype at each site and how much information we might gain from one further read covering that site, which we call the ‘positional benefit score
+
+Most of these false rejections (84%) were due to inability to determine the source species from the initial fragment.
+
+with longer reads giving larger enrichment over the range of read lengths studied
+
+More generally, read lengths of at least 400bp were required for both adaptive sampling methods to start the individual reads’ decision-making process.
+
+
+To maximize selective sequencing, identification must be accomplished before the read completes. This depends on two parameters. Firstly, speed of sequence identification and placement on the reference and secondly, average read length of the library. 
+
+“Read Until” reaches the target coverage in one third the time taken otherwise
+
+Challenges include read counting and overcoming sources of latency within the system
+
+contextual sequencing bias
+
 
 
 
