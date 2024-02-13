@@ -4,6 +4,10 @@ The relative even base and strand coverage facilitates accurate SNP and mutation
 
 Removing the need for short reads, and higher coverage via improvements in non-hybrid error correction tools and/or long-read sequencing accuracy, would reduce the cost, length, and complexity of genomic projects. [Amar 2020]
 
+increasing the sequencing capacity for molecules of interest
+
+dynamically updated decision strategies
+
 
 REVIEW
 
@@ -17,20 +21,10 @@ Metagenomic sequencing is promising for clinical applications to study microbial
 However, their identification via conventional culture-based, microbiological diagnostic techniques suffers from long reporting delays and low sensitivity and specificity14,15. On the other hand, pathogen identification based on 16S ribosomal RNA gene sequencing gives insights into the metagenomic composition with a lower resolution than metagenomics and suffers from various inherent biases to interpret abundance data properly: e.g., primer mismatches, different gene copy numbers, recombinations, sequence- and primer-dependent polymerase efficiency, or choice of hypervariable regions16–19.
 
 
-While a DNA molecule is sequenced in the nanopore, the data is already compared live with references to decide whether the DNA molecule should be sequenced further (accepted or no decision yet) or removed directly from the pore (rejected). Each pore is individually addressable and can reverse the voltage on its pore to reject DNA molecules and sequence another one instead, increasing the sequencing capacity for molecules of interest
-
 The main advantage is that this depletion or enrichment method can be combined in addition to wet-lab depletion or enrichment methods and does not prolong the overall sequencing run time.
 
 in samples containing relatively high proportions of host DNA (> 90%) like saliva, throat, buccal mucosa, and vaginal samples, the detection of low abundant species is expected to be impaired2. Host DNA depletion prior to sequencing by selective lysis of host and microbial cells or selective removal of CpG-methylated host DNA are complex wet-lab procedures3. For instance, host DNA depletion via, e.g., saponin or the “MolYsis Complete5” kit improves the sensitivity of pathogen detection after sequencing4–6.
 
-
-Currently, selection is based on predetermined regions of interest that remain constant throughout an experiment. Sequencing efforts, thus, cannot be re-focused on molecules likely contributing most to experimental success.
-
-In current implementations, decisions about which fragments to read or reject are based on a priori decisions—for example, of regions of interest (ROIs) in a genome12,14. This restricts their application to a narrow range of problems where sufficient information is available in advance of sequencing a potentially poorly characterized sample. We hypothesized that such decisions could also incorporate information obtained from already sequenced fragments generated in the current sequencing run.
-
-
-
-dynamically updated decision strategies
 
 We quantify uncertainty at each genome position with real-time updates from data already observed.
 
