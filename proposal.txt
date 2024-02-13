@@ -1,4 +1,10 @@
+ABSTRACT
+
+The relative even base and strand coverage facilitates accurate SNP and mutation retrieval and discovery. [Michal Mokry, 2010]
+
 Removing the need for short reads, and higher coverage via improvements in non-hybrid error correction tools and/or long-read sequencing accuracy, would reduce the cost, length, and complexity of genomic projects. [Amar 2020]
+
+
 
 
 The generation of sequencing reads in real time, which, in combination with fast library preparation, immensely reduces the time needed to go from biological sample to data analysis, enables (for example) intraoperative decision-making8, improved global food security by rapid identification of plant viruses9 and portable genomic surveillance
@@ -9,11 +15,6 @@ Metagenomic sequencing is promising for clinical applications to study microbial
 
 However, their identification via conventional culture-based, microbiological diagnostic techniques suffers from long reporting delays and low sensitivity and specificity14,15. On the other hand, pathogen identification based on 16S ribosomal RNA gene sequencing gives insights into the metagenomic composition with a lower resolution than metagenomics and suffers from various inherent biases to interpret abundance data properly: e.g., primer mismatches, different gene copy numbers, recombinations, sequence- and primer-dependent polymerase efficiency, or choice of hypervariable regions16–19.
 
-
-Nanopore sequencers can select which DNA molecules to sequence, rejecting a molecule after analysis of a small initial part.
-
-Nanopore’s adaptive sampling method offers selective DNA depletion or target enrichment to directly reject or accept DNA molecules during sequencing without specialized sample preparation.
-Oxford Nanopore Technologies (ONT) recently (November 2020) introduced target enrichment or depletion of unwanted DNA molecules directly during sequencing by simply providing any target DNA fasta sequence.
 
 While a DNA molecule is sequenced in the nanopore, the data is already compared live with references to decide whether the DNA molecule should be sequenced further (accepted or no decision yet) or removed directly from the pore (rejected). Each pore is individually addressable and can reverse the voltage on its pore to reject DNA molecules and sequence another one instead, increasing the sequencing capacity for molecules of interest
 
